@@ -1,5 +1,7 @@
 'use strict';
-import React, {
+
+import React, { Component } from 'react';
+import {
   AppRegistry,
   Component,
   StyleSheet,
@@ -8,7 +10,6 @@ import React, {
   View
 } from 'react-native';
 import Button from 'react-native-button';
-import {Actions} from 'react-native-router-flux';
 import { Artists } from '../../mockData';
 import ArtistListItem from './ArtistListItem';
 
@@ -22,6 +23,13 @@ class ArtistList extends Component {
     }
   }
 
+  showArtist(artist) {
+    this.props.navigator.push({
+      ident: 'ArtistShow',
+      artist
+    })
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -30,7 +38,7 @@ class ArtistList extends Component {
         </Text>
         <ListView
           dataSource={this.state.dataSource}
-          renderRow={ ( artist ) => <ArtistListItem artist={ artist } /> }/>
+          renderRow={ ( artist ) => <ArtistListItem artist={ artist } showArtist={this.showArtist}/> }/>
       </View>
     );
   }

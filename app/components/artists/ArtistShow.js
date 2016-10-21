@@ -1,5 +1,7 @@
 'use strict';
-import React, {
+
+import React, { Component } from 'react';
+import {
   AppRegistry,
   Component,
   Dimensions,
@@ -86,6 +88,7 @@ class ArtistShow extends Component {
   }
 
   render() {
+    alert(this.props.artist)
     const { onScroll = () => {} } = this.props;
     return (
       <View>

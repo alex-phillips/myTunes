@@ -1,7 +1,8 @@
 'use strict';
-import React, {
+
+import React, { Component } from 'react';
+import {
   AppRegistry,
-  Component,
   StyleSheet,
   Text,
   TouchableHighlight,
@@ -10,14 +11,13 @@ import React, {
   Image,
 } from 'react-native';
 import Button from 'react-native-button';
-import {Actions} from 'react-native-router-flux';
 import { Artists } from '../../mockData';
 
 
 class ArtistListItem extends Component {
   render() {
     return (
-      <TouchableHighlight onPress={ () => Actions.artistShow({ artist: this.props.artist}) } activeOpacity={ 100 } underlayColor="#ea4b54">
+      <TouchableHighlight onPress={() => this.props.showArtist(this.props.artist) }>
         <Image
           style={ styles.artistBg }
           resizeMode='cover'

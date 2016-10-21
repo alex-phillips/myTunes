@@ -1,28 +1,56 @@
 'use strict';
-import React, {
+
+import React, { Component } from 'react';
+import {
   AppRegistry,
   Navigator,
-  Component,
   StyleSheet,
   Text,
-  View
+  View,
+  TabBarIOS,
 } from 'react-native';
 import {Router, Route, Schema, Animations, TabBar} from 'react-native-router-flux';
 import ArtistList from './components/artists/ArtistList';
 import ArtistShow from './components/artists/ArtistShow';
 import Player from './components/player/Player';
-import { Artists } from './mockData';
+import AppNavigator from './components/navigation/AppNavigator';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 class RouterComponent extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      selectedTab: "artists"
+    }
+  }
+
   render() {
     return (
-      <Router style={ styles.container } hideNavBar={true}>
-        <Schema name="default" sceneConfig={Navigator.SceneConfigs.FloatFromRight}/>
-        <Schema name="bottom" sceneConfig={Navigator.SceneConfigs.FloatFromBottom}/>
-        <Route name="artistList" component={ArtistList} initial={true} title="Artists"/>
-        <Route name="artistShow" component={ArtistShow} title="The Beatles"/>
-        <Route name="player" hideNavBar={true} schema="bottom" component={Player} title="Come Together"/>
-      </Router>
+      <TabBarIOS
+        selectedTab={this.state.selectedTab}
+        barTintColor='black'
+        tintColor='orange'
+        >
+
+        <Icon.TabBarItemIOS
+          selected={this.state.selectedTab === "artists"}
+          title={`Artists`}
+          iconName="user"
+          onPress={() => this.setState({selectedTab: "artists"})}>
+          <AppNavigator
+            initialRoute={{ident: "ArtistList"}} />
+        </Icon.TabBarItemIOS>
+
+        <Icon.TabBarItemIOS
+          selected={this.state.selectedTab === "settings"}
+          title={`Settings`}
+          iconName="gear"
+          onPress={() => this.setState({selectedTab: "settings"})}>
+          <AppNavigator
+            initialRoute={{ident: "Settings"}} />
+        </Icon.TabBarItemIOS>
+
+      </TabBarIOS>
     );
   }
 }
@@ -34,4 +62,3 @@ const styles = StyleSheet.create({
 });
 
 module.exports = RouterComponent;
-
