@@ -8,6 +8,7 @@ import {
   TextInput,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import Koel from '../api/Koel';
 
 export default class LoginScreen extends Component {
   constructor() {
@@ -20,25 +21,15 @@ export default class LoginScreen extends Component {
   }
 
   _onPressButton() {
-    console.log("state", this.state);
-    fetch(`http://${this.state.serverUrl}/api/me`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        'email': this.state.email,
-        'password': this.state.password,
-      })
-    })
-    .then((response) => response.json())
-    .then((json) => Actions.artistList({ token: json.token, serverUrl: this.state.serverUrl }))
-    .catch((error) =>
-      console.log(error)
-    );
+    console.log("[LoginScreen - _onPressButton] state", this.state);
+    let api = Koel.getInstance(this.state.serverUrl);
+    api.login(this.state.email, this.state.password, err => {
+      if (err) {
+        return console.log(err);
+      }
 
-
+      Actions.artistList();
+    });
   }
 
   render() {

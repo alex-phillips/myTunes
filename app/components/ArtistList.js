@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import ArtistRow from './ArtistRow.js';
 import { Data } from '../../mockKoelData.js';
+import Koel from '../api/Koel';
 
 export default class ArtistList extends Component {
   constructor() {
@@ -21,22 +22,15 @@ export default class ArtistList extends Component {
   }
 
   componentDidMount() {
-    console.log(`Bearer ${this.props.token}`);
-    fetch(`http://${this.props.serverUrl}/api/data`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${this.props.token}`
-      },
-    })
-    .then((response) => response.json())
-    .then((json) => {
+    Koel.getInstance().getLibrary((err, data) => {
+      if (err) {
+        return console.log('error:', err);
+      }
+
       this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(json.artists),
+        dataSource: this.state.dataSource.cloneWithRows(data.artists),
       });
-    })
-    .catch((error) =>
-      console.log(error)
-    );
+    });
   }
 
   render() {
