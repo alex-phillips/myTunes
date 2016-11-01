@@ -21,10 +21,22 @@ export default class ArtistList extends Component {
   }
 
   componentDidMount() {
-    // TODO: Fetch Data
-    this.setState({
-      dataSource: this.state.dataSource.cloneWithRows(Data.artists),
-    });
+    console.log(`Bearer ${this.props.token}`);
+    fetch(`http://${this.props.serverUrl}/api/data`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${this.props.token}`
+      },
+    })
+    .then((response) => response.json())
+    .then((json) => {
+      this.setState({
+        dataSource: this.state.dataSource.cloneWithRows(json.artists),
+      });
+    })
+    .catch((error) =>
+      console.log(error)
+    );
   }
 
   render() {
