@@ -22,27 +22,27 @@ export default class ArtistList extends Component {
   }
 
   componentDidMount() {
-    Koel.getInstance().getLibrary((err, data) => {
-      if (err) {
-        return console.log('error:', err);
-      }
-
-      this.setState({
-        dataSource: this.state.dataSource.cloneWithRows(data.artists),
+    Koel.getInstance().getArtists()
+      .then(artists => {
+        this.setState({
+          dataSource: this.state.dataSource.cloneWithRows(artists),
+        })
+      })
+      .catch(err => {
+        console.log('error:', err);
       });
-    });
   }
 
   render() {
     return (
       <View style={styles.container}>
-      <Text style={styles.title}>
-        Artists
-      </Text>
-      <ListView
-        dataSource={this.state.dataSource}
-        renderRow={(artist) => <ArtistRow artist={ artist } />}/>
-    </View>
+        <Text style={styles.title}>
+          Artists
+        </Text>
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={(artist) => <ArtistRow artist={ artist } />}/>
+      </View>
     );
   }
 }
