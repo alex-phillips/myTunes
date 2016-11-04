@@ -110,7 +110,7 @@ export default class ArtistDetails extends Component {
           { this.renderSongsList() }
         </ParallaxScrollView>
         <View style={ styles.headerClose }>
-          <Icon onPress={ Actions.pop } name="ios-arrow-back" size={30} color="#fff" />
+          <Icon onPress={ Actions.pop } name="ios-arrow-back" size={30} color="#fff" style={{backgroundColor: "rgba(0, 0, 0, 0)"}}/>
         </View>
       </View>
     );
