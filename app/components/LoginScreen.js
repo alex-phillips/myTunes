@@ -21,15 +21,36 @@ export default class LoginScreen extends Component {
   }
 
   _onPressButton() {
-    console.log("[LoginScreen - _onPressButton] state", this.state);
-    let api = Koel.getInstance(this.state.serverUrl);
-    api.login(this.state.email, this.state.password, err => {
-      if (err) {
-        return console.log(err);
-      }
+    console.log("[LoginScreen][_onPressButton] state", this.state);
+    let self = this;
+    Koel.resetInstance().getInstance(this.state.serverUrl)
+      .login(this.state.email, this.state.password)
+        .then(() => {
+          self._onLogin();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+  }
 
-      Actions.artistList();
-    });
+  _onLogin() {
+    Actions.loading();
+    Koel.getInstance().getLibrary()
+      .then(() => {
+        Actions.artistList();
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  componentDidMount() {
+    // Try to login with saved credentials
+    let self = this;
+    Koel.getInstance().ping()
+      .then(() => {
+        self._onLogin();
+      });
   }
 
   render() {
@@ -58,6 +79,7 @@ export default class LoginScreen extends Component {
           placeholder='Password'
           placeholderTextColor='#FFF'
           autoCapitalize='none'
+          secureTextEntry={true}
         />
         <TouchableHighlight style={styles.loginButton} onPress={this._onPressButton.bind(this)}><Text style={styles.loginButtonText}>Login</Text></TouchableHighlight>
       </View>
