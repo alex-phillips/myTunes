@@ -14,8 +14,8 @@ import { Actions } from 'react-native-router-flux';
 import Button from 'react-native-button';
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
 import ArtistRow from './ArtistRow.js';
-// TODO: Add font to xcode project; see https://github.com/oblador/react-native-vector-icons
-// import Icon from 'react-native-vector-icons/Ionicons';
+import Koel from '../api/Koel';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const window = Dimensions.get('window');
 const PARALLAX_HEADER_HEIGHT = 280;
@@ -26,69 +26,79 @@ export default class ArtistDetails extends Component {
 
   renderStickyHeader() {
   return(
-    <View style={ styles.stickySection }>
-      <Text style={ styles.stickySectionTitle }>{ this.props.artist.name }</Text>
-    </View>
-  );
-}
-
-renderForeground() {
-  return(
-    <View key="parallax-header" style={ styles.parallaxHeader }>
-      <Image style={ styles.avatar } source={{
-        uri:  (this.props.artist.image) ? this.props.artist.image : 'https://facebook.github.io/react/img/logo_og.png',
-        width: AVATAR_SIZE,
-        height: AVATAR_SIZE
-      }}/>
-      <Text style={ styles.artistName }>
-        { this.props.artist.name }
-      </Text>
-      <View style={ styles.playButton }>
-        <Text
-          // onPress={ () => Actions.player({ songIndex: 0, songs: this.props.artist.songs, image: this.props.artist.background, artist: this.props.artist }) }
-          style={ styles.playButtonText }>
-          PLAY
-        </Text>
+      <View style={ styles.stickySection }>
+        <Text style={ styles.stickySectionTitle }>{ this.props.artist.name }</Text>
       </View>
-    </View>
-  );
-}
+    );
+  }
 
-renderBackground() {
-  return(
-    <View key="background" style={ styles.background }>
-      <Image source={{uri: (this.props.artist.image) ? this.props.artist.image : 'https://facebook.github.io/react/img/logo_og.png',
-                      width: window.width,
-                      height: PARALLAX_HEADER_HEIGHT}}/>
-      <View style={ styles.backgroundOverlay }/>
-    </View>
-  );
-}
+  renderForeground() {
+    return(
+      <View key="parallax-header" style={ styles.parallaxHeader }>
+        <Image style={ styles.avatar } source={{
+          uri:  (this.props.artist.image) ? this.props.artist.image : 'https://facebook.github.io/react/img/logo_og.png',
+          width: AVATAR_SIZE,
+          height: AVATAR_SIZE
+        }}/>
+        <Text style={ styles.artistName }>
+          { this.props.artist.name }
+        </Text>
+        <View style={ styles.playButton }>
+          <Text
+            // onPress={ () => Actions.player({ songIndex: 0, songs: this.props.artist.songs, image: this.props.artist.background, artist: this.props.artist }) }
+            style={ styles.playButtonText }>
+            PLAY
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
-renderSongsList() {
-  // TODO: maybe show albums here instead?
-  const albumsDataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows( this.props.artist.albums );
-  return(
-    <ListView
-      dataSource={ albumsDataSource }
-      style={ styles.songsList }
-      // renderRow={(album) => <ArtistRow artist={ album } />}/>
-      renderRow={(album, sectionId, rowId) => (
-        <TouchableHighlight activeOpacity={ 100 } underlayColor="rgba(246, 41, 118, 0.6)">
-          <View key={album} style={ styles.song }>
-            <Text style={ styles.songTitle }>
-              { album.name }
-            </Text>
-          </View>
-        </TouchableHighlight>
-        )}/>
-  );
-}
+  renderBackground() {
+    return(
+      <View key="background" style={ styles.background }>
+        <Image source={{uri: (this.props.artist.image) ? this.props.artist.image : 'https://facebook.github.io/react/img/logo_og.png',
+                        width: window.width,
+                        height: PARALLAX_HEADER_HEIGHT}}/>
+        <View style={ styles.backgroundOverlay }/>
+      </View>
+    );
+  }
+
+  renderSongsList() {
+    // TODO: maybe show albums here instead?
+    const albumsDataSource = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows( this.props.albums );
+    return(
+      <ListView
+        dataSource={ albumsDataSource }
+        style={ styles.songsList }
+        // renderRow={(album) => <ArtistRow artist={ album } />}/>
+        renderRow={(album, sectionId, rowId) => (
+          <TouchableHighlight activeOpacity={ 100 } underlayColor="rgba(246, 41, 118, 0.6)">
+            <View key={album} style={ styles.song }>
+              <Text style={ styles.songTitle } onPress={ () => {
+                Koel.getInstance().getAlbum(album.id)
+                  .then((album) => {
+                    Actions.albumShow({ artist: this.props.artist, album: album })
+                  })
+                  .catch(err => {
+                    console.log(err);
+                  });
+              }}>
+                { album.name }
+              </Text>
+            </View>
+          </TouchableHighlight>
+          )
+        }
+      />
+    );
+  }
 
   render() {
     const { onScroll = () => {} } = this.props;
     return (
-      <View>
+      <View style={styles.container}>
         <ParallaxScrollView
           style={ { position: "absolute", top: 0, bottom: 0, left: 0, right: 0, width: window.width, height: window.height } }
           parallaxHeaderHeight={ PARALLAX_HEADER_HEIGHT }
@@ -100,16 +110,17 @@ renderSongsList() {
           { this.renderSongsList() }
         </ParallaxScrollView>
         <View style={ styles.headerClose }>
-          {/*TODO: <Icon onPress={ Actions.pop } name="chevroyypn-left" size={15} color="#fff" /> */}
-          <Text onPress={ Actions.pop }> Back </Text>
+          <Icon onPress={ Actions.pop } name="ios-arrow-back" size={30} color="#fff" />
         </View>
       </View>
     );
   }
-
 }
 
 const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "#000"
+  },
   background: {
     backgroundColor: "#000",
   },
