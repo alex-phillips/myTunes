@@ -9,14 +9,48 @@ import {
   Image,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import Koel from '../api/Koel';
 
 export default class ArtistRow extends Component {
+  constructor() {
+    super();
+    this.state = {
+      artistImage: 'https://facebook.github.io/react/img/logo_og.png',
+    };
+  }
+
+  componentDidMount() {
+    let self = this;
+    fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(this.props.artist.name.toLowerCase())}&type=artist&market=US`)
+      .then(response => response.json())
+      .then(json => {
+        self.props.artist.image = json.artists.items[0].images[0].url;
+        self.setState({
+          artistImage: self.props.artist.image,
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   render() {
     return (
-      <TouchableHighlight onPress={ () => Actions.artistShow({ artist: this.props.artist}) } activeOpacity={ 100 } underlayColor="#ea4b54">
+      <TouchableHighlight onPress={ () => {
+        Koel.getInstance().getArtistsAlbums(this.props.artist.id)
+          .then(albums => {
+            Actions.artistShow({
+              artist: this.props.artist,
+              albums: albums,
+            });
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      } } activeOpacity={ 100 } underlayColor="#ea4b54">
         <Image
           resizeMode='cover'
-          source={{ uri:  (this.props.artist.image) ? this.props.artist.image : 'https://facebook.github.io/react/img/logo_og.png'  }}
+          source={{ uri:  this.state.artistImage  }}
         >
         <View style={ styles.container }>
           <Text style={ styles.artistName }>{ this.props.artist.name }</Text>
