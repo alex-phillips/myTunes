@@ -150,7 +150,6 @@ const styles = StyleSheet.create({
   stickySection: {
     height: STICKY_HEADER_HEIGHT,
     backgroundColor: '#000',
-    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
