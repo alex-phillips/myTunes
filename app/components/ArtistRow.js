@@ -21,6 +21,7 @@ export default class ArtistRow extends Component {
 
   componentDidMount() {
     let self = this;
+    console.log(`Fetching artist ${this.props.artist.name} spotify image`);
     fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(this.props.artist.name.toLowerCase())}&type=artist&market=US`)
       .then(response => response.json())
       .then(json => {
@@ -50,11 +51,13 @@ export default class ArtistRow extends Component {
       } } activeOpacity={ 100 } underlayColor="#ea4b54">
         <Image
           resizeMode='cover'
+          key={this.state.artistImage}
           source={{ uri:  this.state.artistImage  }}
         >
-        <View style={ styles.container }>
-          <Text style={ styles.artistName }>{ this.props.artist.name }</Text>
-        </View>
+          <View style={ styles.container }>
+            <Text style={ styles.artistName }>{ this.props.artist.name }</Text>
+            <Text style={ styles.artistSongs }>{ this.props.artist.albums.length } albums</Text>
+          </View>
         </Image>
       </TouchableHighlight>
     );
