@@ -35,18 +35,31 @@ class Player extends Component {
   }
 
   togglePlay(){
-    this.setState({ playing: !this.state.playing });
+    clearInterval(this.state.progressInterval);
+
+    this.setState({
+      playing: !this.state.playing,
+      progressInterval: this.state.playing ? null : this.getProgressInterval(),
+      startTime: Date.now(),
+      scrubbedTo: this.state.currentTime,
+      elapsed: 0,
+    });
   }
 
   toggleVolume(){
-    this.setState({ muted: !this.state.muted });
+    this.setState({
+      muted: !this.state.muted,
+    });
   }
 
   toggleShuffle(){
-    this.setState({ shuffle: !this.state.shuffle });
+    this.setState({
+      shuffle: !this.state.shuffle,
+    });
   }
 
   goBackward(){
+    console.log(`[Player][goBackward]`);
     if(this.state.currentTime < 3 && this.state.songIndex !== 0 ){
       this.setState({
         songIndex: this.state.songIndex - 1,
@@ -68,6 +81,7 @@ class Player extends Component {
   }
 
   goForward(){
+    console.log(`[Player][goForward]`);
     this.setState({
       songIndex: this.state.shuffle ? this.randomSongIndex() : this.state.songIndex + 1,
       currentTime: 0,
@@ -81,7 +95,7 @@ class Player extends Component {
   }
 
   setTime(params){
-    console.log('[Player][setTime] called');
+    console.log('[Player][setTime]');
     if(!this.state.sliding){
       this.setState({
         currentTime: this.state.currentTime + (Date.now() - this.state.startTime),
@@ -90,29 +104,35 @@ class Player extends Component {
   }
 
   onLoad(params){
-    console.log(`[Player][onLoad] called`);
+    console.log(`[Player][onLoad]`);
 
     clearInterval(this.state.progressInterval);
     this.setState({
       startTime: Date.now(),
       elapsed: 0,
-      progressInterval: setInterval(() => {
-        let timeElapsed = (Date.now() - this.state.startTime) / 1000;
-        console.log(`[Player][progressInterval] current time: ${timeElapsed}`);
-        this.setState({
-          currentTime: this.state.scrubbedTo + timeElapsed,
-        });
-      }, 1000),
+      progressInterval: this.getProgressInterval(),
     });
   }
 
+  getProgressInterval() {
+    return setInterval(() => {
+      let timeElapsed = (Date.now() - this.state.startTime) / 1000;
+      console.log(`[Player][progressInterval] current time: ${timeElapsed}`);
+      this.setState({
+        currentTime: this.state.scrubbedTo + timeElapsed,
+      });
+    }, 1000);
+  }
+
   onSlidingStart(){
+    console.log(`[Player][onSlidingStart]`);
     this.setState({
       sliding: true,
     });
   }
 
   onSlidingChange(value){
+    console.log(`[Player][onSlidingChange]`);
     clearInterval(this.state.progressInterval);
     let newPosition = value * this.state.songDuration;
     this.setState({
@@ -123,6 +143,7 @@ class Player extends Component {
   }
 
   onSlidingComplete(){
+    console.log(`[Player][onSlidingComplete]`);
     this.setState({ sliding: false });
     console.log(`[Player][onSlidingChange] new value: ${this.state.currentTime}`);
 
@@ -141,6 +162,7 @@ class Player extends Component {
   }
 
   onEnd(){
+    console.log(`[Player][onEnd]`);
     this.setState({ playing: false });
   }
 
