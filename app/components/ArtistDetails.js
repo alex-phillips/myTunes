@@ -43,13 +43,6 @@ export default class ArtistDetails extends Component {
         <Text style={ styles.artistName }>
           { this.props.artist.name }
         </Text>
-        <View style={ styles.playButton }>
-          <Text
-            // onPress={ () => Actions.player({ songIndex: 0, songs: this.props.artist.songs, image: this.props.artist.background, artist: this.props.artist }) }
-            style={ styles.playButtonText }>
-            PLAY
-          </Text>
-        </View>
       </View>
     );
   }
@@ -151,6 +144,8 @@ const styles = StyleSheet.create({
     color: "#FFF",
   },
   parallaxHeader: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
     paddingTop: 40,
     width: window.width,
