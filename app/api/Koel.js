@@ -44,11 +44,39 @@ export default class Koel extends API {
     });
   }
 
+  searchArtists(searchText) {
+    let retval = [],
+      self = this;
+
+    return new Promise((resolve, reject) => {
+      for (let artist of self.artists) {
+        if (artist && artist.name.match(new RegExp(searchText, 'i'))) {
+          retval.push(JSON.parse(JSON.stringify(artist)));
+        }
+      }
+
+      return resolve(retval);
+    });
+  }
+
   getArtistsAlbums(artistId) {
     let self = this,
       retval = {};
+
     return new Promise((resolve, reject) => {
-      for (let albumId of self.artists[artistId].albums) {
+      let artist = null;
+      for (let i = 0; i < self.artists.length; i++) {
+        if (self.artists[i].id === artistId) {
+          artist = self.artists[i];
+          break;
+        }
+      }
+
+      if (!artist) {
+        return reject(Error(`No artist found with id ${artistId}`));
+      }
+
+      for (let albumId of artist.albums) {
         retval[albumId] = self.albums[albumId];
       }
 
