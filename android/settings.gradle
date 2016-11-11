@@ -1,4 +1,4 @@
-rootProject.name = 'mobileApp'
+rootProject.name = 'myTunes'
 
 include ':app'
 include ':react-native-vector-icons'
